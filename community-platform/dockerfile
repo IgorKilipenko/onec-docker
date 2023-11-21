@@ -1,0 +1,52 @@
+FROM ubuntu:22.04
+
+ARG PLT_VERSION=8.3.23.1782
+ARG PLT_USER=1000
+ENV LANG ru_RU.UTF-8
+
+ARG PLT_TARGET_FILE=server64_8_3_23_1782.tar.gz
+ARG PLT_INSATALL_FILE=setup-full-8.3.23.1782-x86_64.run
+
+ADD target/${PLT_TARGET_FILE} /install
+
+RUN set -xe \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libsoup2.4-dev \
+        libcups2-dev \
+        libenchant-2-dev \
+        libgtk-3-dev \
+        libgstreamer1.0-dev \
+        libgstreamer-plugins-base1.0-dev \
+        libxt-dev \
+        xvfb \
+        x11vnc \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN chmod +x /install/${PLT_INSATALL_FILE} \
+    && /install/${PLT_INSATALL_FILE} \
+    --mode unattended \
+    --enable-components client_full
+
+RUN rm -rf /install
+
+RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
+  && useradd -r -g grp1cv8 --uid=${PLT_USER} --home-dir=/home/usr1cv8 --shell=/bin/bash usr1cv8 \
+  && mkdir -p /home/usr1cv8/.1cv8 \
+  && chown -R usr1cv8:grp1cv8 /home/usr1cv8
+
+RUN mkdir -p /data \
+    && chown -R usr1cv8:grp1cv8 /data
+
+VOLUME /home/usr1cv8/.1cv8/
+
+ENV DISPLAY=:0
+ENV DISPLAY_WIDTH=1440
+ENV DISPLAY_HEIGHT=900
+
+EXPOSE 5900
+
+USER usr1cv8
+CMD ["/opt/1cv8/x86_64/8.3.23.1782/1cv8"]
+
+### run as -> docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix training-platform:latest

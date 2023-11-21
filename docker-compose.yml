@@ -10,6 +10,16 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - onecdb-data:/data
     network_mode: host
+    
+  community-platform:
+    image: community-platform:latest
+    build: ./community-platform/
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - onecdb-data:/data
+    network_mode: host
 
 volumes:
   onecdb-data:
