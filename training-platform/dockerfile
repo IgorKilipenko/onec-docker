@@ -1,20 +1,11 @@
 FROM ubuntu:22.04
 
-ENV PLT_VERSION=8.3.23.1688
+ARG PLT_VERSION=8.3.23.1688
+ARG PLT_USER=1000
 ENV LANG ru_RU.UTF-8
 
-ARG onec_uid="1000"
-ARG onec_gid="1000"
-ARG onec_version="8.3.23.1688"
-
 ADD target/training_8_3_23_1688_LinuxRun.tar.gz /install
-#RUN cd /install && tar -xzf target/training_8_3_23_1688_LinuxRun.tar.gz && rm target/training_8_3_23_1688_LinuxRun.tar.gz
 
-# RUN set -xe \
-#     && apt-get update \
-#     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-#         libwebkitgtk-3.0-0 \
-#     && rm -rf /var/lib/apt/lists/*
 RUN set -xe \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -25,7 +16,6 @@ RUN set -xe \
         libgstreamer1.0-dev \
         libgstreamer-plugins-base1.0-dev \
         libxt-dev \
-        #xauth \
         xvfb \
         x11vnc \
     && rm -rf /var/lib/apt/lists/*
@@ -35,21 +25,15 @@ RUN chmod +x /install/setup-training-8.3.23.1688-x86_64.run \
 
 RUN rm -rf /install
 
-#RUN xauth add STACPCU/unix: MIT-MAGIC-COOKIE-1 1b247d1944a6d978d21eaf55f32de3bb #ffff#53544143504355#: MIT-MAGIC-COOKIE-1 1b247d1944a6d978d21eaf55f32de3bb
-
-RUN groupadd -r grp1cv8 --gid=$onec_gid \
-  && useradd -r -g grp1cv8 --uid=$onec_uid --home-dir=/home/usr1cv8 --shell=/bin/bash usr1cv8 \
+RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
+  && useradd -r -g grp1cv8 --uid=${PLT_USER} --home-dir=/home/usr1cv8 --shell=/bin/bash usr1cv8 \
   && mkdir -p /home/usr1cv8/.1cv8 \
   && chown -R usr1cv8:grp1cv8 /home/usr1cv8
 
+RUN mkdir -p /data \
+    && chown -R usr1cv8:grp1cv8 /data
+
 VOLUME /home/usr1cv8/.1cv8/
-
-
-#ENV DISPLAY=:0.0
-#USER 1000:1000
-
-#RUN mkdir ~/.vnc
-#RUN x11vnc -storepasswd 1234 ~/.vnc/passwd
 
 ENV DISPLAY=:0
 ENV DISPLAY_WIDTH=1440
