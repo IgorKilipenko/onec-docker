@@ -3,8 +3,8 @@ FROM ubuntu:22.04
 ENV PLT_VERSION=8.3.23.1688
 ENV LANG ru_RU.UTF-8
 
-ARG onec_uid="999"
-ARG onec_gid="999"
+ARG onec_uid="1000"
+ARG onec_gid="1000"
 ARG onec_version="8.3.23.1688"
 
 ADD target/training_8_3_23_1688_LinuxRun.tar.gz /install
@@ -17,30 +17,25 @@ ADD target/training_8_3_23_1688_LinuxRun.tar.gz /install
 #     && rm -rf /var/lib/apt/lists/*
 RUN set -xe \
     && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    #--no-install-recommends \
-        #libnss3-dev \
-        #libgdk-pixbuf2.0-dev \
-        #libgtk-3-dev \
-        #libxss-dev \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libsoup2.4-dev \
         libcups2-dev \
-        #libenchant-2-dev \
-        #libenchant-1-dev \
         libenchant-2-dev \
         libgtk-3-dev \
         libgstreamer1.0-dev \
         libgstreamer-plugins-base1.0-dev \
         libxt-dev \
-        x11vnc \
+        #xauth \
         xvfb \
+        x11vnc \
     && rm -rf /var/lib/apt/lists/*
-
 
 RUN chmod +x /install/setup-training-8.3.23.1688-x86_64.run \
     && /install/setup-training-8.3.23.1688-x86_64.run
 
 RUN rm -rf /install
+
+#RUN xauth add STACPCU/unix: MIT-MAGIC-COOKIE-1 1b247d1944a6d978d21eaf55f32de3bb #ffff#53544143504355#: MIT-MAGIC-COOKIE-1 1b247d1944a6d978d21eaf55f32de3bb
 
 RUN groupadd -r grp1cv8 --gid=$onec_gid \
   && useradd -r -g grp1cv8 --uid=$onec_uid --home-dir=/home/usr1cv8 --shell=/bin/bash usr1cv8 \
@@ -49,8 +44,20 @@ RUN groupadd -r grp1cv8 --gid=$onec_gid \
 
 VOLUME /home/usr1cv8/.1cv8/
 
-#ENV DISPLAY=:0
+
+#ENV DISPLAY=:0.0
 #USER 1000:1000
 
-#CMD [ "onec-training" ]
+#RUN mkdir ~/.vnc
+#RUN x11vnc -storepasswd 1234 ~/.vnc/passwd
+
+ENV DISPLAY=:0
+ENV DISPLAY_WIDTH=1440
+ENV DISPLAY_HEIGHT=900
+
+EXPOSE 5900
+
+USER usr1cv8
 CMD ["/opt/1cv8t/x86_64/8.3.23.1688/1cv8t"]
+
+### run as -> docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix training-platform:latest
