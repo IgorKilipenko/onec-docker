@@ -48,7 +48,7 @@ RUN chmod +x /home/usr1cv8/install/${PLT_INSATALL_FILE} \
 
 RUN rm -rf /home/usr1cv8/home/usr1cv8/install
 
-ADD lic/ /home/usr1cv8/.1cv8/1C/1cv8
+ADD lic/ /home/usr1cv8/.1cv8/1C/1cv8/conf
 RUN chown -R usr1cv8:grp1cv8 /home/usr1cv8/.1cv8/1C/1cv8
 
 ENV DISPLAY=:0

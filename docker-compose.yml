@@ -19,7 +19,6 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - onecdb-data:/data
-    #network_mode: back_net
     ports:
       - "5900:5900"
     networks:
