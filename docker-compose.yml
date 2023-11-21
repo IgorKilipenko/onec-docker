@@ -10,7 +10,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - onecdb-data:/data
     network_mode: host
-    
+
   community-platform:
     image: community-platform:latest
     build: ./community-platform/
@@ -19,7 +19,29 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - onecdb-data:/data
-    network_mode: host
+    #network_mode: back_net
+    ports:
+      - "5900:5900"
+    networks:
+      - client_net
+
+  community-server:
+    image: community-server:latest
+    build: ./community-server/
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - onecdb-data:/data
+    #network_mode: back_net
+    ports:
+      - "5900:5900"
+    networks:
+      - client_net
 
 volumes:
   onecdb-data:
+  server-data:
+
+networks:
+  client_net:
