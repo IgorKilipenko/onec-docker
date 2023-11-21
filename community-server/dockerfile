@@ -38,7 +38,6 @@ RUN mkdir -p /data \
     && chown -R usr1cv8:grp1cv8 /data
 RUN chown -R usr1cv8:grp1cv8 /data
 
-#ADD lic/*.lic /home/usr1cv8/.1cv8/1C/1cv8/conf
 ADD target/${PLT_TARGET_FILE} /home/usr1cv8/install
 
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -48,6 +47,9 @@ RUN chmod +x /home/usr1cv8/install/${PLT_INSATALL_FILE} \
     #--enable-components client_full,liberica_jre,server,ws,server_admin,client_thin,client_thin_fib,ru
 
 RUN rm -rf /home/usr1cv8/home/usr1cv8/install
+
+ADD lic/ /home/usr1cv8/.1cv8/1C/1cv8
+RUN chown -R usr1cv8:grp1cv8 /home/usr1cv8/.1cv8/1C/1cv8
 
 ENV DISPLAY=:0
 ENV DISPLAY_WIDTH=1440
