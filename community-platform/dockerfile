@@ -1,11 +1,13 @@
 FROM ubuntu:22.04
 
-ARG PLT_VERSION=8.3.23.1782
+ENV PLT_VERSION=8.3.24.1368
 ARG PLT_USER=1000
 ENV LANG ru_RU.UTF-8
 
-ARG PLT_TARGET_FILE=server64_8_3_23_1782.tar.gz
-ARG PLT_INSATALL_FILE=setup-full-8.3.23.1782-x86_64.run
+ARG PLT_TARGET_INSATALL_FILE=setup-full-${PLT_VERSION}-x86_64.zip
+ARG PLT_INSATALL_FILE=installAsRoot
+
+SHELL ["/bin/bash", "-c"]
 
 RUN set -xe \
     && apt-get update \
@@ -22,7 +24,7 @@ RUN set -xe \
     x11vnc \
     iputils-ping \
     gstreamer1.0-plugins-good gstreamer1.0-plugins-bad libsecret-1-0 libxslt1.1 geoclue-2.0 \
-    sudo \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
@@ -34,15 +36,18 @@ RUN mkdir -p /data \
     && chown -R usr1cv8:grp1cv8 /data
 RUN chown -R usr1cv8:grp1cv8 /data
 
-ADD target/${PLT_TARGET_FILE} /home/usr1cv8/install
+ADD target/*.tar.gz /install
+RUN mkdir /install/bin
 
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-RUN chmod +x /home/usr1cv8/install/${PLT_INSATALL_FILE} \
-    && /home/usr1cv8/install/${PLT_INSATALL_FILE} \
-    --mode unattended \
-    --enable-components client_full,client_thin,client_thin_fib,liberica_jre,ru
+RUN export PLT_TARGET_DIR=server64_${PLT_VERSION//./_} \
+    && unzip /install/${PLT_TARGET_INSATALL_FILE} -d /install/bin
 
-RUN rm -rf /home/usr1cv8/home/usr1cv8/install
+RUN chmod +x /install/bin/${PLT_INSATALL_FILE} \
+    && /install/bin/${PLT_INSATALL_FILE} \
+    --mode unattended
+    #--enable-components client_full,client_thin,client_thin_fib,liberica_jre,ru
+
+RUN rm -rf /install
 
 ADD lic/ /home/usr1cv8/.1cv8/1C/1cv8/conf
 RUN chown -R usr1cv8:grp1cv8 /home/usr1cv8/.1cv8/1C/1cv8
@@ -55,6 +60,4 @@ USER usr1cv8
 VOLUME /home/usr1cv8
 EXPOSE 5900
 
-CMD ["/opt/1cv8/x86_64/8.3.23.1782/1cv8"]
-
-### run as -> docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix training-platform:latest
+CMD ["sh", "-c", "/opt/1cv8/x86_64/${PLT_VERSION}/1cv8"]
