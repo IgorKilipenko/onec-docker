@@ -10,24 +10,24 @@ ARG PLT_INSATALL_FILE=setup-full-8.3.23.1782-x86_64.run
 RUN set -xe \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        ca-certificates \
-        libsoup2.4-dev \
-        libcups2-dev \
-        libenchant-2-dev \
-        libgtk-3-dev \
-        libgstreamer1.0-dev \
-        libgstreamer-plugins-base1.0-dev \
-        libxt-dev \
-        xvfb \
-        x11vnc \
-        iputils-ping \
-        gstreamer1.0-plugins-good gstreamer1.0-plugins-bad libsecret-1-0 libxslt1.1 geoclue-2.0 \
+    ca-certificates \
+    libsoup2.4-dev \
+    libcups2-dev \
+    libenchant-2-dev \
+    libgtk-3-dev \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libxt-dev \
+    xvfb \
+    x11vnc \
+    iputils-ping \
+    gstreamer1.0-plugins-good gstreamer1.0-plugins-bad libsecret-1-0 libxslt1.1 geoclue-2.0 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
-  && useradd -r -g grp1cv8 --uid=${PLT_USER} --home-dir=/home/usr1cv8 --shell=/sbin/nologin usr1cv8 \
-  && mkdir -p /home/usr1cv8 \
-  && chown -R usr1cv8:grp1cv8 /home/usr1cv8
+    && useradd -r -g grp1cv8 --uid=${PLT_USER} --home-dir=/home/usr1cv8 --shell=/sbin/nologin usr1cv8 \
+    && mkdir -p /home/usr1cv8 \
+    && chown -R usr1cv8:grp1cv8 /home/usr1cv8
 
 RUN mkdir -p /data \
     && chown -R usr1cv8:grp1cv8 /data

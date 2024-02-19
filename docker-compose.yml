@@ -1,46 +1,56 @@
 version: "3"
 
 services:
-  training-platform:
-    image: training-platform:latest
-    build: ./training-platform/
-    environment:
-      - DISPLAY=${DISPLAY}
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - onecdb-data:/data
-    network_mode: host
+    training-platform:
+        image: training-platform:latest
+        build: ./training-platform/
+        environment:
+            - DISPLAY=${DISPLAY}
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - onecdb-data:/data
+        network_mode: host
 
-  community-platform:
-    image: community-platform:latest
-    build: ./community-platform/
-    environment:
-      - DISPLAY=${DISPLAY}
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - onecdb-data:/data
-    ports:
-      - "5900:5900"
-    networks:
-      - client_net
+    community-platform:
+        image: community-platform:latest
+        build: ./community-platform/
+        environment:
+            - DISPLAY=${DISPLAY}
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - onecdb-data:/data
+        ports:
+            - "5900:5900"
+        networks:
+            - client_net
 
-  community-server:
-    image: community-server:latest
-    build: ./community-server/
-    environment:
-      - DISPLAY=${DISPLAY}
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - onecdb-data:/data
-    #network_mode: back_net
-    ports:
-      - "5900:5900"
-    networks:
-      - client_net
+    community-server:
+        image: community-server:latest
+        build: ./community-server/
+        volumes:
+            - onecdb-server-data:/data
+        #ports:
+        #    - "5900:5900"
+        #expose:
+        #    - "1540-1541"
+        #    - "1560-1591"
+        ports:
+            - "1540:1541"
+            - "1560:1591"
+        #networks:
+        #    - server_net
+        network_mode: host
+        #ports:
+        #    - "127.0.0.1:1540-127.0.0.1:1541"
+        #    - "127.0.0.1:1560-127.0.0.1:1591"
 
 volumes:
-  onecdb-data:
-  server-data:
+    onecdb-data:
+    onecdb-server-data:
 
 networks:
-  client_net:
+    client_net:
+    server_net:
+        #enable_ipv6: false
+        external:
+            name: bridge
