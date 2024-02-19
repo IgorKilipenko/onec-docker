@@ -28,20 +28,10 @@ services:
         build: ./community-server/
         volumes:
             - onecdb-server-data:/data
-        #ports:
-        #    - "5900:5900"
-        #expose:
-        #    - "1540-1541"
-        #    - "1560-1591"
         ports:
             - "1540:1541"
             - "1560:1591"
-        #networks:
-        #    - server_net
         network_mode: host
-        #ports:
-        #    - "127.0.0.1:1540-127.0.0.1:1541"
-        #    - "127.0.0.1:1560-127.0.0.1:1591"
 
 volumes:
     onecdb-data:
