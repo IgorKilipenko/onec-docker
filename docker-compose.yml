@@ -21,8 +21,7 @@ services:
             - onecdb-data:/data
         ports:
             - "5900:5900"
-        networks:
-            - client_net
+        network_mode: host
 
     community-server:
         image: community-server:latest
@@ -47,10 +46,3 @@ services:
 volumes:
     onecdb-data:
     onecdb-server-data:
-
-networks:
-    client_net:
-    server_net:
-        #enable_ipv6: false
-        external:
-            name: bridge
