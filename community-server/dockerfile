@@ -1,11 +1,11 @@
 FROM ubuntu:22.04
 
-ARG PLT_VERSION=8.3.23.1782
+ARG PLT_VERSION=8.3.24.1368
 ARG PLT_USER=1000
 ENV LANG ru_RU.UTF-8
 
-ARG PLT_TARGET_FILE=server64_8_3_23_1782.tar.gz
-ARG PLT_INSATALL_FILE=setup-full-8.3.23.1782-x86_64.run
+ARG PLT_TARGET_FILE=server64_8_3_24_1368.tar.gz
+ARG PLT_INSATALL_FILE=setup-full-8.3.24.1368-x86_64
 
 RUN set -xe \
     && apt-get update \
@@ -39,15 +39,13 @@ RUN mkdir -p /data \
     && chown -R usr1cv8:grp1cv8 /data
 RUN chown -R usr1cv8:grp1cv8 /data
 
-ADD target/${PLT_TARGET_FILE} /home/usr1cv8/install
-
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-RUN chmod +x /home/usr1cv8/install/${PLT_INSATALL_FILE} \
-    && /home/usr1cv8/install/${PLT_INSATALL_FILE} \
+ADD target/server64_8_3_24_1368/setup-full-8.3.24.1368-x86_64 /install
+RUN chmod +x /install/installAsRoot \
+    && /install/installAsRoot \
     --mode unattended \
     --enable-components server,ws,server_admin,ru
 
-RUN rm -rf /home/usr1cv8/home/usr1cv8/install
+RUN rm -rf /install
 
 ADD lic/ /var/1C/licenses
 RUN chown -R usr1cv8:grp1cv8 /var/1C
@@ -57,4 +55,4 @@ VOLUME /home/usr1cv8
 VOLUME /var/log/1C
 EXPOSE 1540-1541 1560-1591
 
-CMD ["/opt/1cv8/x86_64/8.3.23.1782/ragent"]
+CMD ["/opt/1cv8/x86_64/8.3.24.1368/ragent"]
