@@ -22,6 +22,7 @@ RUN set -xe \
     x11vnc \
     iputils-ping \
     gstreamer1.0-plugins-good gstreamer1.0-plugins-bad libsecret-1-0 libxslt1.1 geoclue-2.0 \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
@@ -35,10 +36,11 @@ RUN chown -R usr1cv8:grp1cv8 /data
 
 ADD target/${PLT_TARGET_FILE} /home/usr1cv8/install
 
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN chmod +x /home/usr1cv8/install/${PLT_INSATALL_FILE} \
     && /home/usr1cv8/install/${PLT_INSATALL_FILE} \
     --mode unattended \
-    --enable-components client_full
+    --enable-components client_full,client_thin,client_thin_fib,liberica_jre,ru
 
 RUN rm -rf /home/usr1cv8/home/usr1cv8/install
 
