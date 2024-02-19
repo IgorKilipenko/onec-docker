@@ -21,7 +21,6 @@ services:
             - onecdb-data:/data
         ports:
             - "5900:5900"
-        network_mode: host
 
     community-server:
         image: community-server:latest

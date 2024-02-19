@@ -7,8 +7,6 @@ ENV LANG ru_RU.UTF-8
 ARG PLT_TARGET_INSATALL_FILE=setup-full-${PLT_VERSION}-x86_64.zip
 ARG PLT_INSATALL_FILE=installAsRoot
 
-SHELL ["/bin/bash", "-c"]
-
 RUN set -xe \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -39,15 +37,19 @@ RUN chown -R usr1cv8:grp1cv8 /data
 ADD target/*.tar.gz /install
 RUN mkdir /install/bin
 
+SHELL ["/bin/bash", "-c"]
+
 RUN export PLT_TARGET_DIR=server64_${PLT_VERSION//./_} \
     && unzip /install/${PLT_TARGET_INSATALL_FILE} -d /install/bin
 
 RUN chmod +x /install/bin/${PLT_INSATALL_FILE} \
     && /install/bin/${PLT_INSATALL_FILE} \
-    --mode unattended
-    #--enable-components client_full,client_thin,client_thin_fib,liberica_jre,ru
+    --mode unattended \
+    --enable-components client_full,client_thin,client_thin_fib,liberica_jre,ru
 
 RUN rm -rf /install
+
+RUN ln -srf /lib/x86_64-linux-gnu/libenchant-2.so /lib/x86_64-linux-gnu/libenchant.so.1
 
 ADD lic/ /home/usr1cv8/.1cv8/1C/1cv8/conf
 RUN chown -R usr1cv8:grp1cv8 /home/usr1cv8/.1cv8/1C/1cv8
