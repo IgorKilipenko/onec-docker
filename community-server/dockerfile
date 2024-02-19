@@ -57,7 +57,4 @@ VOLUME /home/usr1cv8
 VOLUME /var/log/1C
 EXPOSE 1540-1541 1560-1591
 
-#CMD ["/opt/1cv8/x86_64/8.3.23.1782/ragent"]
 CMD ["/opt/1cv8/x86_64/8.3.23.1782/ragent"]
-
-### run as -> docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix training-platform:latest
