@@ -1,11 +1,11 @@
 FROM ubuntu:22.04
 
-ARG PLT_VERSION=8.3.24.1368
+ENV PLT_VERSION=8.3.24.1368
 ARG PLT_USER=1000
 ENV LANG ru_RU.UTF-8
 
-ARG PLT_TARGET_FILE=server64_8_3_24_1368.tar.gz
-ARG PLT_INSATALL_FILE=setup-full-8.3.24.1368-x86_64
+ARG PLT_TARGET_INSATALL_FILE=setup-full-${PLT_VERSION}-x86_64.zip
+ARG PLT_INSATALL_FILE=installAsRoot
 
 RUN set -xe \
     && apt-get update \
@@ -17,13 +17,10 @@ RUN set -xe \
     libgtk-3-dev \
     libgstreamer1.0-dev \
     libgstreamer-plugins-base1.0-dev \
-    libxt-dev \
-    xvfb \
-    x11vnc \
     iputils-ping \
     gstreamer1.0-plugins-good gstreamer1.0-plugins-bad libsecret-1-0 libxslt1.1 geoclue-2.0 \
-    sudo \
     iproute2 \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
@@ -39,13 +36,18 @@ RUN mkdir -p /data \
     && chown -R usr1cv8:grp1cv8 /data
 RUN chown -R usr1cv8:grp1cv8 /data
 
-ADD target/server64_8_3_24_1368/setup-full-8.3.24.1368-x86_64 /install
-RUN chmod +x /install/installAsRoot \
-    && /install/installAsRoot \
+SHELL ["/bin/bash", "-c"]
+ADD target/*.tar.gz /install
+RUN mkdir /install/bin
+RUN unzip /install/${PLT_TARGET_INSATALL_FILE} -d /install/bin
+RUN chmod +x /install/bin/installAsRoot \
+    && /install/bin/installAsRoot \
     --mode unattended \
     --enable-components server,ws,server_admin,ru
 
 RUN rm -rf /install
+
+RUN ln -srf /lib/x86_64-linux-gnu/libenchant-2.so /lib/x86_64-linux-gnu/libenchant.so.1
 
 ADD lic/ /var/1C/licenses
 RUN chown -R usr1cv8:grp1cv8 /var/1C
@@ -55,5 +57,4 @@ VOLUME /home/usr1cv8
 VOLUME /var/log/1C
 EXPOSE 1540-1541 1560-1591
 
-USER ${PLT_USER}:${PLT_USER}
 CMD [ "/opt/1cv8/x86_64/8.3.24.1368/ragent", "-d", "/home/usr1cv8/.1cv8/1C/1cv8", "-port", "1540", "-regport", "1541", "-range", "1560:1591", "-seclev", "0", "-pingPeriod", "1000", "-pingTimeout", "5000", "-debug"]
