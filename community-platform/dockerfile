@@ -39,9 +39,7 @@ RUN mkdir /install/bin
 
 SHELL ["/bin/bash", "-c"]
 
-RUN export PLT_TARGET_DIR=server64_${PLT_VERSION//./_} \
-    && unzip /install/${PLT_TARGET_INSATALL_FILE} -d /install/bin
-
+RUN unzip /install/${PLT_TARGET_INSATALL_FILE} -d /install/bin
 RUN chmod +x /install/bin/${PLT_INSATALL_FILE} \
     && /install/bin/${PLT_INSATALL_FILE} \
     --mode unattended \
