@@ -29,8 +29,8 @@ RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
     && chown -R usr1cv8:grp1cv8 /home/usr1cv8
 
 
-RUN mkdir -p /var/1C/licenses \
-    && chown -R usr1cv8:grp1cv8 /var/1C/licenses
+RUN mkdir -p /var/1C/licenses /var/log/1C  /home/usr1cv8/.1cv8/1C/1cv8/conf \
+    && chown -R usr1cv8:grp1cv8 /var/1C/licenses /var/log/1C /home/usr1cv8/.1cv8/1C/1cv8/conf
 
 RUN mkdir -p /data \
     && chown -R usr1cv8:grp1cv8 /data
@@ -49,7 +49,11 @@ RUN rm -rf /install
 
 RUN ln -srf /lib/x86_64-linux-gnu/libenchant-2.so /lib/x86_64-linux-gnu/libenchant.so.1
 
+RUN mkdir -p /home/usr1cv8/.1cv8/1C/1cv8/conf \
+    && chown -R usr1cv8:grp1cv8 /home/usr1cv8/.1cv8/1C/1cv8/conf
+
 ADD lic/ /var/1C/licenses
+ADD conf/ /home/usr1cv8/.1cv8/1C/1cv8/conf
 RUN chown -R usr1cv8:grp1cv8 /var/1C
 
 USER usr1cv8
@@ -57,4 +61,4 @@ VOLUME /home/usr1cv8
 VOLUME /var/log/1C
 EXPOSE 1540-1541 1560-1591
 
-CMD [ "/opt/1cv8/x86_64/8.3.24.1368/ragent", "-d", "/home/usr1cv8/.1cv8/1C/1cv8", "-port", "1540", "-regport", "1541", "-range", "1560:1591", "-seclev", "0", "-pingPeriod", "1000", "-pingTimeout", "5000", "-debug"]
+CMD ["sh", "-c", "/opt/1cv8/x86_64/${PLT_VERSION}/ragent", "-d", "/home/usr1cv8/.1cv8/1C/1cv8", "-port", "1540", "-regport", "1541", "-range", "1560:1591", "-seclev", "0", "-pingPeriod", "1000", "-pingTimeout", "5000", "-debug"]
