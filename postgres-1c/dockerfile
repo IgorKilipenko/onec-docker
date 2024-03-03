@@ -31,16 +31,13 @@ RUN set -xe \
 RUN locale-gen ${LANG} \
     && update-locale
 
-#RUN rm -rf ${PG_DATADIR}/*
 RUN ${PG_BINDIR}/pg-setup initdb --locale=${LANG}
 
 USER postgres
 EXPOSE 5432/tcp
 VOLUME ["${PG_HOME}"]
 
-RUN echo ${PG_DATADIR}
-RUN export PGDATA=${PG_DATADIR}
-
 RUN echo "Starting PostgreSQL ${PG_VERSION}..."
 
-CMD ["sh", "-c", "${PG_BINDIR}/postgres", "-D", "/var/lib/pgpro/1c-16/data"]
+CMD ["sh", "-c", "${PG_BINDIR}/postgres -D ${PG_DATADIR}"]
+#CMD ["sh", "-c", "${PG_BINDIR}/pg_ctl start  -D ${PG_DATADIR}"]
