@@ -49,7 +49,7 @@ RUN rm -rf /install
 RUN ln -srf /lib/x86_64-linux-gnu/libenchant-2.so /lib/x86_64-linux-gnu/libenchant.so.1
 
 ADD lic/ /var/1C/licenses
-COPY conf/* /opt/1cv8/x86_64/${PLT_VERSION}/conf
+COPY conf/* /opt/1cv8/conf
 RUN chown -R usr1cv8:grp1cv8 /var/1C
 
 USER usr1cv8
