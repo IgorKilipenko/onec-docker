@@ -1,0 +1,46 @@
+FROM ubuntu:22.04
+
+ENV PG_VERSION=1c-16
+ENV PG_USER=999
+ENV PG_HOME=/var/lib/pgpro/${PG_VERSION}
+
+ENV PG_BINDIR=/opt/pgpro/${PG_VERSION}/bin
+ENV PG_DATADIR=${PG_HOME}/data
+ENV PG_DEFCONFIG=/etc/default/postgrespro-${PG_VERSION}
+
+ENV LANG ru_RU.UTF-8
+
+RUN groupadd postgres --gid=${PG_USER} \
+    && useradd --gid postgres --uid=${PG_USER} postgres
+
+RUN set -xe \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates \
+    wget
+
+RUN wget https://repo.postgrespro.ru/${PG_VERSION}/keys/pgpro-repo-add.sh \
+    && sh pgpro-repo-add.sh
+
+RUN set -xe \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    postgrespro-1c-16 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN locale-gen ${LANG} \
+    && update-locale
+
+#RUN rm -rf ${PG_DATADIR}/*
+RUN ${PG_BINDIR}/pg-setup initdb --locale=${LANG}
+
+USER postgres
+EXPOSE 5432/tcp
+VOLUME ["${PG_HOME}"]
+
+RUN echo ${PG_DATADIR}
+RUN export PGDATA=${PG_DATADIR}
+
+RUN echo "Starting PostgreSQL ${PG_VERSION}..."
+
+CMD ["sh", "-c", "${PG_BINDIR}/postgres", "-D", "/var/lib/pgpro/1c-16/data"]

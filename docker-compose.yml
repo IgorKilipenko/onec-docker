@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
     training-platform:
@@ -8,7 +8,7 @@ services:
             - DISPLAY=${DISPLAY}
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
-            - onecdb-data:/data
+            - platform-data:/data
         network_mode: host
 
     community-platform:
@@ -18,7 +18,7 @@ services:
             - DISPLAY=${DISPLAY}
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
-            - onecdb-data:/data
+            - platform-data:/data
         ports:
             - "5900:5900"
 
@@ -34,6 +34,25 @@ services:
             - "1560:1591"
         network_mode: host
 
+    postgres-1c:
+        image: postgres-1c:latest
+        build: ./postgres-1c/
+        environment:
+            - PG_VERSION=1c-16
+            - DEBUG=false
+        ports:
+            - "5433:5433"
+        volumes:
+            - type: volume
+              source: postgres-1c-data
+              target: /data
+              volume:
+                nocopy: true
+            #- type: bind
+            #  source: /mnt/SSD_2TB_2023/pgpro-data/1c-16
+            #  target: ${PG_DATADIR}
+
 volumes:
-    onecdb-data:
+    platform-data:
     onecdb-server-data:
+    postgres-1c-data:
