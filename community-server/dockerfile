@@ -29,12 +29,11 @@ RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
     && chown -R usr1cv8:grp1cv8 /home/usr1cv8
 
 
-RUN mkdir -p /var/1C/licenses /var/log/1C  /home/usr1cv8/.1cv8/1C/1cv8/conf \
-    && chown -R usr1cv8:grp1cv8 /var/1C/licenses /var/log/1C /home/usr1cv8/.1cv8/1C/1cv8/conf
+RUN mkdir -p /var/1C/licenses \
+    && chown -R usr1cv8:grp1cv8 /var/1C/licenses
 
-RUN mkdir -p /data \
-    && chown -R usr1cv8:grp1cv8 /data
-RUN chown -R usr1cv8:grp1cv8 /data
+RUN mkdir -p /data /var/log/1C \
+    && chown -R usr1cv8:grp1cv8 /data /var/log/1C
 
 SHELL ["/bin/bash", "-c"]
 ADD target/*.tar.gz /install
@@ -49,11 +48,8 @@ RUN rm -rf /install
 
 RUN ln -srf /lib/x86_64-linux-gnu/libenchant-2.so /lib/x86_64-linux-gnu/libenchant.so.1
 
-RUN mkdir -p /home/usr1cv8/.1cv8/1C/1cv8/conf \
-    && chown -R usr1cv8:grp1cv8 /home/usr1cv8/.1cv8/1C/1cv8/conf
-
 ADD lic/ /var/1C/licenses
-ADD conf/ /home/usr1cv8/.1cv8/1C/1cv8/conf
+COPY conf/* /opt/1cv8/x86_64/${PLT_VERSION}/conf
 RUN chown -R usr1cv8:grp1cv8 /var/1C
 
 USER usr1cv8
