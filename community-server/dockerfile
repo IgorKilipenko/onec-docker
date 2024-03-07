@@ -34,7 +34,6 @@ RUN mkdir -p /var/1C/licenses \
 RUN mkdir -p /data /var/log/1C \
     && chown -R usr1cv8:grp1cv8 /data /var/log/1C
 
-#SHELL ["/bin/bash", "-c"]
 ADD target/*.tar.gz /install
 RUN mkdir /install/bin
 RUN unzip /install/${PLT_TARGET_INSATALL_FILE} -d /install/bin
@@ -56,5 +55,4 @@ VOLUME /home/usr1cv8
 VOLUME /var/log/1C
 EXPOSE 1540-1541 1560-1591
 
-#CMD ["sh", "-c", "/opt/1cv8/x86_64/${PLT_VERSION}/ragent", "-d", "/home/usr1cv8/.1cv8/1C/1cv8", "-port", "1540", "-regport", "1541", "-range", "1560:1591", "-seclev", "0", "-pingPeriod", "1000", "-pingTimeout", "5000", "-debug"]
 CMD /opt/1cv8/x86_64/${PLT_VERSION}/ragent -d /home/usr1cv8/.1cv8/1C/1cv8 -port 1540 -regport 1541 -range 1560:1591 -seclev 0 -pingPeriod 1000 -pingTimeout 5000 -debug
