@@ -2,6 +2,7 @@ FROM ubuntu:22.04
 
 ENV PG_VERSION=1c-16
 ENV PG_USER=999
+ENV PG_USER_PASSWORD=Secret
 ENV PG_HOME=/var/lib/pgpro/${PG_VERSION}
 
 ENV PG_BINDIR=/opt/pgpro/${PG_VERSION}/bin
@@ -12,6 +13,13 @@ ENV LANG ru_RU.UTF-8
 
 RUN groupadd postgres --gid=${PG_USER} \
     && useradd --gid postgres --uid=${PG_USER} postgres
+
+RUN mkdir -p ${PG_HOME} \
+    && chown -R postgres:postgres ${PG_HOME}
+
+RUN mkdir -p ${PG_DATADIR} \
+    && chown -R postgres:postgres ${PG_DATADIR} \
+    && chmod 1777 ${PG_DATADIR}
 
 RUN set -xe \
     && apt-get update \
@@ -31,13 +39,21 @@ RUN set -xe \
 RUN locale-gen ${LANG} \
     && update-locale
 
-RUN ${PG_BINDIR}/pg-setup initdb --locale=${LANG}
+RUN ${PG_BINDIR}/pg-setup initdb --locale=${LANG} --pgdata=${PG_DATADIR}
 
 USER postgres
 EXPOSE 5432/tcp
-VOLUME ["${PG_HOME}"]
+VOLUME ${PG_DATADIR}
+
+#RUN ${PG_BINDIR}/pg_ctl -D ${PG_DATADIR} -w start
+#RUN ${PG_BINDIR}/postgres -D ${PG_DATADIR}
+#RUN psql
+#RUN psql -v ON_ERROR_STOP=1 --username "postgres" --no-password --no-psqlrc 
+#RUN \\password postgres ${PG_USER_PASSWORD}
+#RUN \\q
+#RUN ${PG_BINDIR}/pg_ctl stop -D ${PG_DATADIR}
 
 RUN echo "Starting PostgreSQL ${PG_VERSION}..."
 
 CMD ["sh", "-c", "${PG_BINDIR}/postgres -D ${PG_DATADIR}"]
-#CMD ["sh", "-c", "${PG_BINDIR}/pg_ctl start  -D ${PG_DATADIR}"]
+#CMD ["sh", "-c", "${PG_BINDIR}/pg_ctl start -D ${PG_DATADIR}"]

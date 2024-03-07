@@ -41,7 +41,7 @@ services:
             - PG_VERSION=1c-16
             - DEBUG=false
         ports:
-            - "5433:5433"
+            - "5432:5432"
         volumes:
             - type: volume
               source: postgres-1c-data
@@ -49,8 +49,11 @@ services:
               volume:
                 nocopy: true
             #- type: bind
-            #  source: /mnt/SSD_2TB_2023/pgpro-data/1c-16
-            #  target: ${PG_DATADIR}
+            #  source: /mnt/SSD_2TB_2023/pgpro-data/1c-16/data
+            #  target: /data
+            - type: bind
+              source: /mnt/SSD_2TB_2023/123
+              target: /data/backup
 
 volumes:
     platform-data:
