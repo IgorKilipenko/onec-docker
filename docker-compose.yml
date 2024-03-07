@@ -48,9 +48,6 @@ services:
               target: /data
               volume:
                 nocopy: true
-            #- type: bind
-            #  source: /mnt/SSD_2TB_2023/pgpro-data/1c-16/data
-            #  target: /data
             - type: bind
               source: /mnt/SSD_2TB_2023/123
               target: /data/backup

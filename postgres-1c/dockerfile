@@ -45,15 +45,11 @@ USER postgres
 EXPOSE 5432/tcp
 VOLUME ${PG_DATADIR}
 
-#RUN ${PG_BINDIR}/pg_ctl -D ${PG_DATADIR} -w start
-#RUN ${PG_BINDIR}/postgres -D ${PG_DATADIR}
-#RUN psql
-#RUN psql -v ON_ERROR_STOP=1 --username "postgres" --no-password --no-psqlrc 
-#RUN \\password postgres ${PG_USER_PASSWORD}
-#RUN \\q
-#RUN ${PG_BINDIR}/pg_ctl stop -D ${PG_DATADIR}
+# set password for postgres
+RUN ${PG_BINDIR}/pg_ctl -D ${PG_DATADIR} start \
+    && psql -v ON_ERROR_STOP=1 --username postgres --no-password --no-psqlrc -c "ALTER USER postgres WITH PASSWORD '${PG_USER_PASSWORD}';" \
+    && ${PG_BINDIR}/pg_ctl -D ${PG_DATADIR} stop
 
 RUN echo "Starting PostgreSQL ${PG_VERSION}..."
 
-CMD ["sh", "-c", "${PG_BINDIR}/postgres -D ${PG_DATADIR}"]
-#CMD ["sh", "-c", "${PG_BINDIR}/pg_ctl start -D ${PG_DATADIR}"]
+CMD ${PG_BINDIR}/postgres -D ${PG_DATADIR}
