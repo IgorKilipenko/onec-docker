@@ -1,11 +1,11 @@
 FROM ubuntu:22.04
 
 ENV PLT_VERSION=8.3.24.1368
-ARG PLT_USER=1000
+ENV PLT_USER=1000
 ENV LANG ru_RU.UTF-8
 
-ARG PLT_TARGET_INSATALL_FILE=setup-full-${PLT_VERSION}-x86_64.zip
-ARG PLT_INSATALL_FILE=installAsRoot
+ENV PLT_TARGET_INSATALL_FILE=setup-full-${PLT_VERSION}-x86_64.zip
+ENV PLT_INSATALL_FILE=installAsRoot
 
 RUN set -xe \
     && apt-get update \
@@ -28,14 +28,13 @@ RUN groupadd -r grp1cv8 --gid=${PLT_USER} \
     && mkdir -p /home/usr1cv8 \
     && chown -R usr1cv8:grp1cv8 /home/usr1cv8
 
-
 RUN mkdir -p /var/1C/licenses \
     && chown -R usr1cv8:grp1cv8 /var/1C/licenses
 
 RUN mkdir -p /data /var/log/1C \
     && chown -R usr1cv8:grp1cv8 /data /var/log/1C
 
-SHELL ["/bin/bash", "-c"]
+#SHELL ["/bin/bash", "-c"]
 ADD target/*.tar.gz /install
 RUN mkdir /install/bin
 RUN unzip /install/${PLT_TARGET_INSATALL_FILE} -d /install/bin
@@ -57,4 +56,5 @@ VOLUME /home/usr1cv8
 VOLUME /var/log/1C
 EXPOSE 1540-1541 1560-1591
 
-CMD ["sh", "-c", "/opt/1cv8/x86_64/${PLT_VERSION}/ragent", "-d", "/home/usr1cv8/.1cv8/1C/1cv8", "-port", "1540", "-regport", "1541", "-range", "1560:1591", "-seclev", "0", "-pingPeriod", "1000", "-pingTimeout", "5000", "-debug"]
+#CMD ["sh", "-c", "/opt/1cv8/x86_64/${PLT_VERSION}/ragent", "-d", "/home/usr1cv8/.1cv8/1C/1cv8", "-port", "1540", "-regport", "1541", "-range", "1560:1591", "-seclev", "0", "-pingPeriod", "1000", "-pingTimeout", "5000", "-debug"]
+CMD /opt/1cv8/x86_64/${PLT_VERSION}/ragent -d /home/usr1cv8/.1cv8/1C/1cv8 -port 1540 -regport 1541 -range 1560:1591 -seclev 0 -pingPeriod 1000 -pingTimeout 5000 -debug
