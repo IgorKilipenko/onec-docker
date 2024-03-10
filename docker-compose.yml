@@ -38,19 +38,21 @@ services:
         image: postgres-1c:latest
         build: ./postgres-1c/
         environment:
-            - PG_VERSION=1c-16
-            - DEBUG=false
+            - PG_VERSION=${PG_VERSION}
+            - PG_PORT=${PG_PORT}
         ports:
-            - "5432:5432"
+            - "${PG_PORT}:${PG_PORT}"
+        expose:
+            - ${PG_PORT}
         volumes:
             - type: volume
               source: postgres-1c-data
-              target: /data
+              target: /var/lib/pgpro/${PG_VERSION}
               volume:
                 nocopy: true
-            - type: bind
-              source: /mnt/SSD_2TB_2023/123
-              target: /data/backup
+            #- type: bind
+            #  source: /mnt/SSD_2TB_2023/123
+            #  target: /data/backup
 
 volumes:
     platform-data:
