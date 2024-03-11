@@ -30,8 +30,8 @@ services:
         volumes:
             - onecdb-server-data:/data
         ports:
-            - "1540:1541"
-            - "1560:1591"
+            - "1540-1541:1540-1541"
+            - "1560-1561:1560-1561"
         network_mode: host
 
     postgres-1c:
@@ -46,15 +46,15 @@ services:
             - ${PG_PORT}
         volumes:
             - type: volume
-              source: postgres-1c-data
-              target: /var/lib/pgpro/${PG_VERSION}
+              source: postgres-pro
+              target: /var/lib/pgpro
               volume:
-                nocopy: true
-            #- type: bind
-            #  source: /mnt/SSD_2TB_2023/123
-            #  target: /data/backup
+                nocopy: false
+            - type: bind
+              source: /mnt/SSD_2TB_2023/123 
+              target: /var/lib/pgpro
 
 volumes:
     platform-data:
     onecdb-server-data:
-    postgres-1c-data:
+    postgres-pro:
