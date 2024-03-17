@@ -4,7 +4,6 @@ ENV PG_VERSION=1c-16
 ENV PG_USER=999
 ENV PG_USER_PASSWORD=Secret
 ENV PG_HOME=/var/lib/pgpro/${PG_VERSION}
-ENV PG_PORT=5432
 
 ENV PG_BINDIR=/opt/pgpro/${PG_VERSION}/bin
 ENV PG_DATADIR=${PG_HOME}/data
@@ -43,8 +42,8 @@ RUN locale-gen ${LANG} \
 RUN ${PG_BINDIR}/pg-setup initdb --locale=${LANG} --pgdata=${PG_DATADIR}
 
 USER postgres
-EXPOSE ${PG_PORT}/tcp
-VOLUME ${PG_DATADIR}
+EXPOSE 5432/tcp
+VOLUME ${PG_HOME}
 
 # set password for postgres
 RUN ${PG_BINDIR}/pg_ctl -D ${PG_DATADIR} start \
@@ -53,4 +52,4 @@ RUN ${PG_BINDIR}/pg_ctl -D ${PG_DATADIR} start \
 
 RUN echo "Starting PostgreSQL ${PG_VERSION}..."
 
-CMD ${PG_BINDIR}/postgres -D ${PG_DATADIR} -p ${PG_PORT}
+CMD ${PG_BINDIR}/postgres -D ${PG_DATADIR} -p 5432
