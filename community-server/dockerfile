@@ -5,7 +5,6 @@ ENV PLT_USER=1000
 ENV LANG ru_RU.UTF-8
 
 ENV PLT_TARGET_INSATALL_FILE=setup-full-${PLT_VERSION}-x86_64.zip
-ENV PLT_INSATALL_FILE=installAsRoot
 
 RUN set -xe \
     && apt-get update \
