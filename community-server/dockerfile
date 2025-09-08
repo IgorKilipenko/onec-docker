@@ -1,14 +1,15 @@
 FROM ubuntu:22.04
 
-ENV PLT_VERSION=8.3.24.1368
+ARG PLT_VERSION=8.3.24.1368
+ENV PLT_VERSION=${PLT_VERSION}
 ENV PLT_USER=1000
 ENV LANG ru_RU.UTF-8
 
-ENV PLT_TARGET_INSATALL_FILE=setup-full-${PLT_VERSION}-x86_64.zip
+ARG PLT_INSATALL_FILE=setup-full-${PLT_VERSION}-x86_64.run
 
 RUN set -xe \
-    && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    && apt-get update --allow-releaseinfo-change \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --allow-unauthenticated \
     ca-certificates \
     libsoup2.4-dev \
     libcups2-dev \
@@ -33,11 +34,18 @@ RUN mkdir -p /var/1C/licenses \
 RUN mkdir -p /data /var/log/1C \
     && chown -R usr1cv8:grp1cv8 /data /var/log/1C
 
-ADD target/*.tar.gz /install
+RUN PLT_VERSION_UNDERSCORE=$(echo ${PLT_VERSION} | tr '.' '_') && \
+    echo "Looking for file: server64_${PLT_VERSION_UNDERSCORE}.zip"
+
+ADD target/server64_*.zip /install/
 RUN mkdir /install/bin
-RUN unzip /install/${PLT_TARGET_INSATALL_FILE} -d /install/bin
-RUN chmod +x /install/bin/installAsRoot \
-    && /install/bin/installAsRoot \
+
+SHELL ["/bin/bash", "-c"]
+
+RUN PLT_VERSION_UNDERSCORE=$(echo ${PLT_VERSION} | tr '.' '_') && \
+    unzip /install/server64_${PLT_VERSION_UNDERSCORE}.zip -d /install/bin
+RUN chmod +x /install/bin/${PLT_INSATALL_FILE} \
+    && /install/bin/${PLT_INSATALL_FILE} \
     --mode unattended \
     --enable-components server,ws,server_admin,ru
 
